@@ -1,0 +1,204 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+const questions = [
+  {
+    type: "scale",
+    question: "Firstlyyyyyy, how much do you honestly love me?",
+  },
+  {
+    question: "When you miss me, what do you want most?",
+    options: ["Hug me", "Call me", "See me in person"],
+  },
+  {
+    question: "What’s your favorite way I show love?",
+    options: ["Words", "Actions", "Physical affection"],
+  },
+  {
+    question: "If we had free time right now, what would you choose?",
+    options: ["Cuddle and talk", "Go out together", "Night walk together"],
+  },
+  {
+    question: "What makes you smile faster when it’s from me?",
+    options: ["A sweet text", "My voice", "Seeing my face"],
+  },
+  {
+    question: "How do you feel when I hug you?",
+    options: ["Safe", "Happy", "All of the above"],
+  },
+  {
+    question: "What’s your favorite us moment?",
+    options: ["Laughing together", "Watching together", "Late night talks together"],
+  },
+  {
+    question: "If I surprised you, you’d prefer… (I know your answer already)",
+    options: ["A love letter", "A thoughtful gift", "Stocks of ramen"],
+  },
+  {
+    question: "What do you crave more from me?",
+    options: ["Reassurance", "Attention", "Affection"],
+  },
+  {
+    question: "When you think about me, you feel…",
+    options: ["Warm", "Loved", "Miss me"],
+  },
+];
+
+export default function LoveQuiz() {
+  const [current, setCurrent] = useState(0);
+  const [scale, setScale] = useState(100);
+  const [scaleAttempts, setScaleAttempts] = useState(0);
+  const [scaleMessage, setScaleMessage] = useState("");
+  const [otherText, setOtherText] = useState("");
+  const [answers, setAnswers] = useState([]);
+  const [finished, setFinished] = useState(false);
+
+  const handleScaleContinue = () => {
+    if (scale === 100) {
+      setAnswers([{ question: questions[0].question, answer: `${scale}%` }]);
+      setCurrent(1);
+      return;
+    }
+
+    const attempts = scaleAttempts + 1;
+    setScaleAttempts(attempts);
+
+    if (attempts === 1) setScaleMessage("Haha I know you're playing..");
+    if (attempts === 2) setScaleMessage("Actually..?");
+    if (attempts >= 3) {
+      setScaleMessage("Alright then :'(");
+      setAnswers([{ question: questions[0].question, answer: `${scale}%` }]);
+      setCurrent(1);
+    }
+  };
+
+  const handleContinue = (selected) => {
+    const q = questions[current];
+    const answer = selected || otherText || "(no answer)";
+
+    setAnswers((prev) => [...prev, { question: q.question, answer }]);
+    setOtherText("");
+
+    if (current + 1 < questions.length) {
+      setCurrent(current + 1);
+    } else {
+      setFinished(true);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-pink-100 p-4 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,192,203,0.4),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,182,193,0.4),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(255,105,180,0.3),transparent_40%)]" />
+
+      <AnimatePresence mode="wait">
+        {!finished ? (
+          <motion.div
+            key={current}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="relative z-10"
+          >
+            <Card className="max-w-md w-full rounded-2xl shadow-xl bg-pink-50">
+              <CardContent className="p-6 space-y-4">
+                <h2 className="text-xl font-semibold text-center text-pink-700">
+                  {questions[current].question}
+                </h2>
+
+                {questions[current].type === "scale" ? (
+                  <>
+                    <div className="text-center text-3xl font-bold text-pink-600">{scale}%</div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={scale}
+                      onChange={(e) => setScale(Number(e.target.value))}
+                      className="w-full accent-pink-500"
+                    />
+                    {scaleMessage && (
+                      <p className="text-center text-red-500 font-medium">{scaleMessage}</p>
+                    )}
+                    <Button
+                      className="w-full rounded-xl bg-pink-500 hover:bg-pink-600"
+                      onClick={handleScaleContinue}
+                    >
+                      Continue 💖
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 gap-3">
+                      {questions[current].options.map((opt, idx) => (
+                        <Button
+                          key={idx}
+                          variant="outline"
+                          className="rounded-xl border-pink-300"
+                          onClick={() => handleContinue(opt)}
+                        >
+                          {opt}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <input
+                      type="text"
+                      placeholder="Other..."
+                      value={otherText}
+                      onChange={(e) => setOtherText(e.target.value)}
+                      className="w-full mt-2 p-2 rounded-xl border border-pink-300 focus:outline-none"
+                    />
+
+                    <Button
+                      className="w-full mt-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white"
+                      onClick={() => handleContinue(null)}
+                    >
+                      Continue 💖
+                    </Button>
+                  </>
+                )}
+
+                <p className="text-sm text-center text-pink-400">
+                  {current + 1} / {questions.length}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="result"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative z-10"
+          >
+            <Card className="max-w-md rounded-2xl shadow-xl bg-pink-50">
+              <CardContent className="p-6 space-y-4">
+                <h2 className="text-2xl font-bold text-center text-pink-700">A Letter For You 💌</h2>
+                <p className="text-pink-700 leading-relaxed">
+                  My love, I made this little quiz not to test you - but to smile at every answer you gave.
+                  Seeing how you miss me, feel with me, and choose us means more than words can say.
+                  No matter what you picked, you picked us.
+                  And I choose you. Always.
+                </p>
+
+                <div className="space-y-2">
+                  {answers.map((a, i) => (
+                    <div key={i} className="text-sm">
+                      <p className="font-semibold">{a.question}</p>
+                      <p className="text-pink-600">{a.answer}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-center text-pink-500 font-medium">Forever yours 💗</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
