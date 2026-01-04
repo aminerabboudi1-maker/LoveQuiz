@@ -14,6 +14,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+    }
+
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      font-size: 20px;
+      animation: floatUp linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0.9;
+      }
+      to {
+        transform: translateY(-110vh) scale(1.5);
+        opacity: 0;
+      }
     }
 
     .card {
@@ -24,6 +51,8 @@
       max-width: 420px;
       box-shadow: 0 20px 40px rgba(255, 105, 180, 0.25);
       text-align: center;
+      position: relative;
+      z-index: 1;
     }
 
     h2 {
@@ -57,7 +86,8 @@
       background: #ffe3ef;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       padding: 10px;
       border-radius: 12px;
@@ -89,9 +119,13 @@
 </head>
 
 <body>
+  <div class="hearts" id="hearts"></div>
   <div class="card" id="app"></div>
 
   <script>
+    const PASSWORD = "maysousa";
+    let unlocked = false;
+
     const questions = [
       { type: "scale", text: "Firstlyyyyyy, how much do you honestly love me?" },
       { text: "When you miss me, what do you want most?", options: ["Hug me", "Call me", "See me in person"] },
@@ -111,7 +145,31 @@
 
     const app = document.getElementById("app");
 
+    function renderPassword() {
+      app.innerHTML = `
+        <h2>Little Secret 💗</h2>
+        <input type="password" id="pw" placeholder="Enter the password…" />
+        <button class="btn">Unlock 💖</button>
+        <div id="msg" class="red"></div>
+      `;
+
+      app.querySelector("button").onclick = () => {
+        const val = app.querySelector("#pw").value;
+        if (val === PASSWORD) {
+          unlocked = true;
+          render();
+        } else {
+          app.querySelector("#msg").textContent = "Hmm… that’s not it 🥺";
+        }
+      };
+    }
+
     function render() {
+      if (!unlocked) {
+        renderPassword();
+        return;
+      }
+
       app.innerHTML = "";
 
       if (current >= questions.length) {
@@ -220,6 +278,20 @@
       app.appendChild(small);
     }
 
+    function createHearts() {
+      const container = document.getElementById("hearts");
+      setInterval(() => {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.textContent = "💗";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = 4 + Math.random() * 4 + "s";
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 8000);
+      }, 400);
+    }
+
+    createHearts();
     render();
   </script>
 </body>
