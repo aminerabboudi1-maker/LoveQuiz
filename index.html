@@ -33,14 +33,8 @@
     }
 
     @keyframes floatUp {
-      from {
-        transform: translateY(0) scale(1);
-        opacity: 0.9;
-      }
-      to {
-        transform: translateY(-110vh) scale(1.5);
-        opacity: 0;
-      }
+      from { transform: translateY(0) scale(1); opacity: 0.9; }
+      to { transform: translateY(-110vh) scale(1.5); opacity: 0; }
     }
 
     .card {
@@ -63,7 +57,7 @@
     .btn {
       width: 100%;
       padding: 12px;
-      margin-top: 10px;
+      margin-top: 12px;
       border-radius: 999px;
       border: none;
       background: #ff69b4;
@@ -87,12 +81,28 @@
     }
 
     input[type="text"],
-    input[type="password"] {
+    input[type="password"],
+    textarea {
       width: 100%;
-      padding: 10px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 16px;
       border: 2px solid #ffb6d5;
       margin-top: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      resize: none;
+      outline: none;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 70px;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #ff69b4;
+      box-shadow: 0 0 0 3px rgba(255,105,180,0.2);
     }
 
     input[type="range"] {
@@ -113,6 +123,14 @@
 
     .answer {
       text-align: left;
+      margin-top: 10px;
+    }
+
+    .password-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       margin-top: 10px;
     }
   </style>
@@ -148,9 +166,11 @@
     function renderPassword() {
       app.innerHTML = `
         <h2>Little Secret 💗</h2>
-        <input type="password" id="pw" placeholder="Enter the password…" />
-        <button class="btn">Unlock 💖</button>
-        <div id="msg" class="red"></div>
+        <div class="password-box">
+          <input type="password" id="pw" placeholder="Enter the password…" />
+          <button class="btn">Unlock 💖</button>
+          <div id="msg" class="red"></div>
+        </div>
       `;
 
       app.querySelector("button").onclick = () => {
@@ -256,8 +276,8 @@
           app.appendChild(b);
         });
 
-        const input = document.createElement("input");
-        input.placeholder = "Other…";
+        const input = document.createElement("textarea");
+        input.placeholder = "Other… say it in your own words 💗";
         app.appendChild(input);
 
         const btn = document.createElement("button");
