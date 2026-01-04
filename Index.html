@@ -14,6 +14,35 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Floating hearts background */
+    .hearts {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -30px;
+      font-size: 20px;
+      color: rgba(255, 105, 180, 0.6);
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-110vh) scale(1.4);
+        opacity: 0;
+      }
     }
 
     .card {
@@ -24,6 +53,8 @@
       max-width: 420px;
       box-shadow: 0 20px 40px rgba(255, 105, 180, 0.25);
       text-align: center;
+      position: relative;
+      z-index: 2;
     }
 
     h2 {
@@ -89,9 +120,33 @@
 </head>
 
 <body>
+  <!-- Floating hearts -->
+  <div class="hearts" id="hearts"></div>
+
+  <!-- Main card -->
   <div class="card" id="app"></div>
 
   <script>
+    /* Create floating hearts */
+    const heartsContainer = document.getElementById("hearts");
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "💗";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = 14 + Math.random() * 24 + "px";
+      heart.style.animationDuration = 6 + Math.random() * 6 + "s";
+      heart.style.opacity = Math.random();
+
+      heartsContainer.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 12000);
+    }
+
+    setInterval(createHeart, 400);
+
+    /* Quiz logic */
     const questions = [
       { type: "scale", text: "Firstlyyyyyy, how much do you honestly love me?" },
       { text: "When you miss me, what do you want most?", options: ["Hug me", "Call me", "See me in person"] },
